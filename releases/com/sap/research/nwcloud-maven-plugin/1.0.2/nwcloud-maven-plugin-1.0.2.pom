@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.sap.research</groupId>
+    <artifactId>nwcloud-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
+    <version>1.0.2</version>
+    <name>nwcloud-maven-plugin</name>
+
+    <properties>
+        <!--
+            Maven Releases on Steroids
+            http://www.axelfontaine.com/2011/01/maven-releases-on-steroids-2-preparing.html
+        -->
+        <VERSION_NUMBER>1.0.1-SNAPSHOT</VERSION_NUMBER>
+        <releaseRepoUrl>file:../mvn-repo/releases</releaseRepoUrl>
+        <snapshotRepoUrl>file:../mvn-repo/snapshots</snapshotRepoUrl>
+        <deployRepoUrl>file:../mvn-repo/releases</deployRepoUrl>
+        <isRelease>true</isRelease>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!--
+        # github-maven-plugins
+            <github.global.userName>my_username</github.global.userName>
+            <github.global.password>my_password</github.global.password>
+            <github.global.oauth2Token>token</github.global.oauth2Token>
+        # userName & password or as alternative oauth2token is set in
+        # "~/.m2/settings.xml" and referenced via "github.global.server"
+        -->
+        <github.global.server>github</github.global.server>
+    </properties>
+
+
+    <organization>
+        <name>SAP AG</name>
+        <url>http://www.sap.com/</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <description>SAP NetWeaver Cloud Deployment Plugin for Maven</description>
+    <url>https://github.com/MNicks/nwcloud-maven-plugin</url>
+
+    <issueManagement>
+        <url>https://github.com/MNicks/nwcloud-maven-plugin/issues</url>
+        <system>GitHub Issues</system>
+    </issueManagement>
+
+    <!-- cf. http://www.sonatype.com/people/2009/09/maven-tips-and-tricks-using-github/  -->
+    <scm>
+        <connection>scm:git:git@github.com:MNicks/nwcloud-maven-plugin.git</connection>
+        <url>https://github.com/MNicks/nwcloud-maven-plugin</url>
+        <developerConnection>scm:git:git@github.com:MNicks/nwcloud-maven-plugin.git</developerConnection>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots-repo</id>
+            <name>Snapshots Repo</name>
+            <url>file:../mvn-repo/snapshots</url>
+            <layout>default</layout>
+        </snapshotRepository>
+        <repository>
+            <id>releases-repo</id>
+            <name>Releases Repo</name>
+            <url>file:../mvn-repo/releases</url>
+            <layout>default</layout>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <!-- needed for GIT COMMIT ID PLUGIN
+             cf. src/resources/git.properties
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+          -->
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <!-- put your configurations here -->
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.plugin-tools</groupId>
+                        <artifactId>maven-plugin-tools-ant</artifactId>
+                        <version>2.9</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.1.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- true is default here, it prints some more information during the build -->
+                    <verbose>true</verbose>
+
+                    <!--
+                        If you'd like to tell the plugin where your .git directory is,
+                        use this setting, otherwise we'll perform a search trying to
+                        figure out the right directory. It's better to add it explicite IMHO.
+                    -->
+                    <dotGitDirectory>/Development/projects/nwcloud-maven-plugin/.git</dotGitDirectory>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.3</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.7</version>
+                <configuration>
+                    <path>1.0.2</path>
+                    <merge>true</merge>
+                    <message>Building site for 1.0.2</message>
+                    <server>github</server>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
+                used in alternative release workflow
+                should normally placed in parent pom
+             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>replace-pom-placeholder</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>/Development/projects/nwcloud-maven-plugin</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>pom.xml</include>
+                                        <include>**/*.properties</include>
+                                        <include>**/*.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                            <outputDirectory>/Development/projects/nwcloud-maven-plugin/target/pom-install-deploy-fix</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>overwrite-pom</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <packaging>pom</packaging>
+                            <file>target/pom-install-deploy-fix/pom.xml</file>
+                            <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
+                            <version>1.0.2</version>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>overwrite-pom</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy-file</goal>
+                        </goals>
+                        <configuration>
+                            <packaging>pom</packaging>
+                            <file>target/pom-install-deploy-fix/pom.xml</file>
+                            <pomFile>target/pom-install-deploy-fix/pom.xml</pomFile>
+                            <url>file:../mvn-repo/releases</url>
+                            <version>1.0.2</version>
+                            <updateReleaseInfo>true</updateReleaseInfo>
+                            <uniqueVersion>false</uniqueVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>1.8.1</version>
+                <configuration>
+                    <tag>nwcloud-maven-plugin-1.0.2</tag>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>snapshot-deploy-url-override</id>
+            <activation>
+                <property>
+                    <name>!VERSION_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <deployRepoUrl>file:../mvn-repo/snapshots</deployRepoUrl>
+                <isRelease>false</isRelease>
+            </properties>
+        </profile>
+
+        <!-- GitHub up/downloads are deprecated
+                <profile>
+                    <id>release-deploy-github</id>
+                    <activation>
+                        <property>
+                            <name>!VERSION_NUMBER</name>
+                        </property>
+                    </activation>
+                    <build>
+                        <plugins>
+                            <plugin>
+                                <groupId>com.github.github</groupId>
+                                <artifactId>downloads-maven-plugin</artifactId>
+                                <version>0.6</version>
+                                <executions>
+                                    <execution>
+                                        <goals>
+                                            <goal>upload</goal>
+                                        </goals>
+                                        <phase>install</phase>
+                                        <configuration>
+                                            <description>1.0.2 release of nwcloud-maven-plugin</description>
+                                            <override>true</override>
+                                            <includeAttached>true</includeAttached>
+                                        </configuration>
+                                    </execution>
+                                </executions>
+                            </plugin>
+                        </plugins>
+                    </build>
+                </profile>
+        -->
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-script-ant</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+        <!-- Need to reference latest ant and its according launcher -->
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-launcher</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+    </dependencies>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+</project>
